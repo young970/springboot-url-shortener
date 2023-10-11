@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 public class EncodedUrl {
     private static final int MAX_URL_LENGTH = 8;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, name = "encoded_url")
     private String encodedUrl;
 
     @Enumerated(EnumType.STRING)
