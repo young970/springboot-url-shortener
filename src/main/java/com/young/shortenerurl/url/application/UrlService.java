@@ -37,7 +37,7 @@ public class UrlService {
 
     @Transactional
     public String findOriginUrl(String encodedUrl) {
-        Url url = urlRepository.getByEncodedUrl(encodedUrl);
+        Url url = urlRepository.findByEncodedUrlWithPessimisticLock(encodedUrl);
 
         url.increaseVisitCount();
 

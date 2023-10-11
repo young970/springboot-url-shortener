@@ -1,5 +1,6 @@
 package com.young.shortenerurl.url.application;
 
+import com.young.shortenerurl.global.generator.SequenceRepository;
 import com.young.shortenerurl.url.application.dto.UrlCreateRequest;
 import com.young.shortenerurl.url.application.dto.UrlInfoFindResponse;
 import com.young.shortenerurl.url.infrastructures.UrlJpaRepository;
@@ -7,19 +8,22 @@ import com.young.shortenerurl.url.model.EncodedUrl;
 import com.young.shortenerurl.url.model.EncodingType;
 import com.young.shortenerurl.url.model.Url;
 import com.young.shortenerurl.url.util.Encoder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test")
-@Transactional
 class UrlServiceTest {
 
     @Autowired
@@ -27,6 +31,9 @@ class UrlServiceTest {
 
     @Autowired
     private UrlJpaRepository urlJpaRepository;
+
+    @Autowired
+    private SequenceRepository sequenceRepository;
 
     private Url setupUrl;
 
@@ -41,6 +48,12 @@ class UrlServiceTest {
         );
 
         setupUrl = urlJpaRepository.save(url);
+    }
+
+    @AfterEach
+    void tearDown(){
+        urlJpaRepository.deleteAll();
+        sequenceRepository.deleteAll();
     }
 
     @Test
@@ -115,6 +128,34 @@ class UrlServiceTest {
         assertThat(response.originUrl()).isEqualTo(setupUrl.getOriginUrl());
         assertThat(response.encodedUrl()).isEqualTo(setupUrl.getEncodedUrl());
         assertThat(response.visitCount()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("originUrl 조회 시 조회수 동시성 테스트")
+    void findOriginUrl_concurrencyTest() throws InterruptedException {
+        //given
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        //when
+        for (int i = 0; i < threadCount; i++){
+            executorService.submit(() -> {
+                try {
+                    urlService.findOriginUrl(setupUrl.getEncodedUrl());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+
+        //then
+        Url url = urlJpaRepository.findById(setupUrl.getId())
+                .orElseThrow();
+
+        assertThat(url.getVisitCount()).isEqualTo(100L);
     }
 
 }
