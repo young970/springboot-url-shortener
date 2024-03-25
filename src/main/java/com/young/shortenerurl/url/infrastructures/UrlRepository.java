@@ -9,9 +9,9 @@ public interface UrlRepository {
 
     Url getByEncodedUrl(String encodedUrl);
 
-    Url findByEncodedUrlWithPessimisticLock(String encodedUrl);
-
     Boolean existsByOriginUrl(String originUrl);
 
     Url getByOriginUrl(String originUrl);
+
+    void increaseVisitCount(Long urlId);
 }

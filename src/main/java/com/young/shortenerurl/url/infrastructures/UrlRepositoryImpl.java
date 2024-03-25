@@ -27,15 +27,14 @@ public class UrlRepositoryImpl implements UrlRepository {
     }
 
     @Override
-    public Url findByEncodedUrlWithPessimisticLock(String encodedUrl) {
-        return urlJpaRepository.findByEncodedUrlWithPessimisticLock(encodedUrl)
-                .orElseThrow(() -> new EntityNotFoundException("해당 encodedUrl를 가진 url을 찾을 수 없습니다."));
-    }
-
-    @Override
     public Url getByOriginUrl(String originUrl) {
         return urlJpaRepository.findUrlByOriginUrl(originUrl)
                 .orElseThrow(() -> new EntityNotFoundException("해당 originUrl를 가진 url을 찾을 수 없습니다."));
+    }
+
+    @Override
+    public void increaseVisitCount(Long urlId) {
+        urlJpaRepository.increaseVisitCount(urlId);
     }
 
     @Override
