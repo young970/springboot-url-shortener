@@ -23,12 +23,13 @@ import org.springframework.util.Assert;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Url {
+    private static final int MAX_ORIGIN_URL_LENGTH = 2083;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 2083, nullable = false, updatable = false)
+    @Column(length = MAX_ORIGIN_URL_LENGTH, nullable = false, updatable = false)
     private String originUrl;
 
     @Embedded
