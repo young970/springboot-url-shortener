@@ -1,6 +1,7 @@
 package com.young.shortenerurl.url.application;
 
 import com.young.shortenerurl.global.generator.SequenceRepository;
+import com.young.shortenerurl.support.IntegrationTest;
 import com.young.shortenerurl.url.application.dto.UrlCreateRequest;
 import com.young.shortenerurl.url.application.dto.UrlInfoFindResponse;
 import com.young.shortenerurl.url.infrastructures.UrlJpaRepository;
@@ -22,9 +23,7 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("test")
-class UrlServiceTest {
+class UrlServiceTest extends IntegrationTest {
 
     @Autowired
     private UrlService urlService;
