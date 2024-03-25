@@ -1,11 +1,9 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/shortener_url_test?serverTimezone=Asia/Seoul
-    username: root
-    password: 12345!
-    hikari:
-      maximum-pool-size: 40
+    url: jdbc:h2:mem:refund_helper
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
 
   jpa:
     open-in-view: false
