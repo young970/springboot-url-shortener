@@ -11,5 +11,7 @@ public interface UrlRepository {
 
     Url findByEncodedUrlWithPessimisticLock(String encodedUrl);
 
-    Optional<Url> findByOriginUrl(String originUrl);
+    Boolean existsByOriginUrl(String originUrl);
+
+    Url getByOriginUrl(String originUrl);
 }

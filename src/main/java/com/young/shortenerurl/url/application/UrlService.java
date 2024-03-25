@@ -23,16 +23,15 @@ public class UrlService {
     public String createUrl(UrlCreateRequest request) {
         String encodedUrl = encodingExecutor.encode(request.encodingType());
 
-        Url savedUrl = urlRepository.findByOriginUrl(request.originUrl()).orElseGet(() -> {
-            Url url = new Url(
-                    request.originUrl(),
-                    new EncodedUrl(encodedUrl, request.encodingType())
-            );
+        if (urlRepository.existsByOriginUrl(request.originUrl())) {
+            Url url = urlRepository.getByOriginUrl(request.originUrl());
 
-            return urlRepository.save(url);
-        });
+            return url.getEncodedUrl();
+        }
 
-        return savedUrl.getEncodedUrl();
+        Url savedUrl = request.toUrl(encodedUrl);
+        return urlRepository.save(savedUrl).getEncodedUrl();
+
     }
 
     @Transactional

@@ -33,8 +33,14 @@ public class UrlRepositoryImpl implements UrlRepository {
     }
 
     @Override
-    public Optional<Url> findByOriginUrl(String originUrl) {
-        return urlJpaRepository.findUrlByOriginUrl(originUrl);
+    public Url getByOriginUrl(String originUrl) {
+        return urlJpaRepository.findUrlByOriginUrl(originUrl)
+                .orElseThrow(() -> new EntityNotFoundException("해당 originUrl를 가진 url을 찾을 수 없습니다."));
+    }
+
+    @Override
+    public Boolean existsByOriginUrl(String originUrl) {
+        return urlJpaRepository.existsByOriginUrl(originUrl);
     }
 
 }

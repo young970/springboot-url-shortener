@@ -19,4 +19,6 @@ public interface UrlJpaRepository extends JpaRepository<Url, Long> {
     Optional<Url> findByEncodedUrlWithPessimisticLock(@Param(value = "encodedUrl") String encodedUrl);
 
     Optional<Url> findUrlByOriginUrl(String originUrl);
+
+    Boolean existsByOriginUrl(String originUrl);
 }
