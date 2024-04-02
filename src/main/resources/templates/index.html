@@ -26,7 +26,6 @@
     </style>
 
     <title>URL-SHORTENER</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -67,13 +66,15 @@
 
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
 <script>
     $(document).ready(function() {
         $("#url-form").on('submit', function(event) {
-            event.preventDefault(); // Prevent the form from submitting via the browser
+            event.preventDefault();
 
-            var originUrl = $('#originUrl').val();
-            var encodingType = $('select[name="encodingType"]').val();
+            let originUrl = $('#originUrl').val();
+            let encodingType = $('select[name="encodingType"]').val();
 
             $.ajax({
                 url: '/api/urls',
@@ -81,36 +82,31 @@
                 contentType: 'application/json',
                 data: JSON.stringify({ "originUrl": originUrl, "encodingType": encodingType }),
                 success: function(data) {
-                    // On successful post, reload data to get the added one as well
-                    console.log(data);
                     $('#short-url').attr('href', data.encodedUrl).text(data.encodedUrl);
                 }
             });
         });
 
         $("#copy-button").on('click', function(event) {
-            var copyText = document.getElementById("short-url");
+            let copyText = document.getElementById("short-url");
 
-            // Create a temporary input to be able to use the execCommand method
-            var tempInput = document.createElement("input");
+            let tempInput = document.createElement("input");
             tempInput.value = copyText.textContent;
 
             document.body.appendChild(tempInput);
 
             tempInput.select();
 
-            // This will copy the text of the input (the short url)
             document.execCommand("copy");
 
-            // Cleanup (remove the temporary input)
             document.body.removeChild(tempInput);
 
             alert("Copied the text: " + copyText.textContent);
         });
 
         $("#visit-count-button").on('click', function(event) {
-            var fullUrl = $('#encodedUrl').val();
-            var encodedUrl = fullUrl.split('/').pop();
+            let fullUrl = $('#encodedUrl').val();
+            let encodedUrl = fullUrl.split('/').pop();
 
             $.ajax({
                 url: '/api/urls/encodedUrl/' + encodedUrl,
